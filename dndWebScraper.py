@@ -15,9 +15,6 @@ def test_spell_entry(row):
 	else:
 		return False
 
-def get_spell_name(entry): 
-	return row_cells[1].find_all("a")
-
 def get_all_spells(html_soup): 
 	spells=[]
 	all_rows_in_html_page = html_soup.find_all("tr")
@@ -39,7 +36,6 @@ def get_all_spells(html_soup):
 
 def get_spell_details(html_soup): 
 	all_details_on_page = html_soup.find_all("div", { "class" : "col-md-12" })
-	#print(str(list(all_details_on_page)))
 	details = {
 		"name" : re.sub('<[^>]+>', '', str(list(all_details_on_page[0].find_all("span")[0]))),
 		"level" : re.sub('<[^>]+>', '', str(all_details_on_page[0].find_all("p")[1].find_all("strong")[0])),
@@ -57,19 +53,7 @@ def get_spell_details(html_soup):
 			break
 		else: 
 			details['description'] += re.sub('<[^>]+>|[\n]|[\r]', '', str(all_details_on_page[0].find_all("p")[i])).strip(" ")
-			#print(details['description'])
 	return details
-	
-	#for i in range(len(all_details_on_page[0].find_all("p"))): 
-		#print str(i)
-		#print all_details_on_page[0].find_all("p")[i]
-		#print "------------------------------------------------------"
-	
-
-	#for i in all_details_on_page[0].find_all("p")[1].find_all("strong"): 
-		#print re.sub('<[^>]+>', '', str(i))
-	#print(all_details_on_page[0].find_all("p")[1].find_all("strong"))
-	#return all_details_on_page
 
 def make_spells_df(spells): 
 	data = pd.DataFrame(spells)["name", "level", "school", "casting time", "ritual", "concentration", "classes", "source"]
@@ -94,18 +78,12 @@ def get_website_info(html_soup):
 
 if __name__ == "__main__":
 	html = urllib.urlopen("https://www.dnd-spells.com/spells")
-	#spells_list = get_website_info(bs4.BeautifulSoup(html, 'html.parser'))
 
 	spells_list = get_all_spells(bs4.BeautifulSoup(html, 'html.parser'))
 	spells_df = pd.DataFrame(spells_list)
-	#print(spells_df['name'].head(10))
-	#for i in range(0, 5): 
-		#get_all_spell_details(spells_df['name'](i))
 
 	all_spell_details = get_all_spell_details(spells_df['name'])
 	spell_details_df = pd.DataFrame(all_spell_details)
-
-	#print(spells_df)
 
 	spells_df.to_csv('spells.csv', encoding='utf-8')
 	spell_details_df.to_csv('spellDetails.csv', encoding='utf-8')
