@@ -31,7 +31,7 @@ def get_all_spells(html_soup):
 				"casting time": row_cells[4].text, 
 				"ritual": row_cells[5].text, 
 				"concentration": row_cells[6].text, 
-				"classes": re.sub('[\n]', '', row_cells[7].text).strip(' '), 
+				"classes": ' '.join((re.sub('[\n]', '', row_cells[7].text).strip(' ')).split()), 
 				"source": row_cells[8].text
 			}
 			spells.append(spell_entry)
@@ -102,7 +102,7 @@ if __name__ == "__main__":
 	#for i in range(0, 5): 
 		#get_all_spell_details(spells_df['name'](i))
 
-	all_spell_details = get_all_spell_details(spells_df['name'].head(5))
+	all_spell_details = get_all_spell_details(spells_df['name'])
 	spell_details_df = pd.DataFrame(all_spell_details)
 
 	#print(spells_df)
