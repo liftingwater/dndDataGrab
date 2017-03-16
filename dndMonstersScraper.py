@@ -17,8 +17,10 @@ def parse_monster_data(monsters):
 			"name" : re.sub('<[^>]+>', '', str(monster.find_all("strong", {"itemprop": "name"})[0])), 
 			"size" : re.sub('<[^>]+>', '', str(monster.find_all("em")[0])), 
 			"type" : re.sub('<[^>]+>', '', str(monster.find_all("em")[1])), 
-			"alignment" : re.sub('<[^>]+>', '', str(monster.find_all("em")[2])) 
+			"alignment" : re.sub('<[^>]+>', '', str(monster.find_all("em")[2])), 
+			"challenge" : re.sub('<[^>]+>|CR |\[|\]', '', str(monster.find_all("strong",  {"class" : "m-l-10"})))
 		}
+
 		monster_data.append(data)
 	return monster_data
 
@@ -26,5 +28,4 @@ if __name__ == "__main__":
 	html = urllib.urlopen("http://www.orcpub.com/dungeons-and-dragons/5th-edition/monsters")
 	monster_manual = get_monster_list(bs4.BeautifulSoup(html, 'html.parser'))
 	print(parse_monster_data(monster_manual[0:5]))
-
 
