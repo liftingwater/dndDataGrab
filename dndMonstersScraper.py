@@ -24,8 +24,15 @@ def parse_monster_data(monsters):
 		monster_data.append(data)
 	return monster_data
 
+def make_monsters_dataFrame(monsters):
+	data = pd.DataFrame(monsters, columns = ['name', 'type', 'size', 'alignment', 'challenge'])
+	return data
+
 if __name__ == "__main__":
 	html = urllib.urlopen("http://www.orcpub.com/dungeons-and-dragons/5th-edition/monsters")
 	monster_manual = get_monster_list(bs4.BeautifulSoup(html, 'html.parser'))
-	print(parse_monster_data(monster_manual[0:5]))
+	monster_manual = parse_monster_data(monster_manual[0:5])
+	monster_manual = make_monsters_dataFrame(monster_manual)
+
+
 
