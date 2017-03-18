@@ -31,6 +31,7 @@ def make_monsters_dataFrame(monsters):
 def get_all_monster_details(monsters): 
 	for monster in monsters: 
 		html = urllib.urlopen("http://www.orcpub.com/dungeons-and-dragons/5th-edition/monsters/" + monster.lower())
+		#view_monster_details(bs4.BeautifulSoup(html, 'html.parser'))
 		monster_details_on_page = parse_monster_details(bs4.BeautifulSoup(html, 'html.parser'))
 		monster_details_on_page["name"] = monster
 		return monster_details_on_page
@@ -38,8 +39,14 @@ def get_all_monster_details(monsters):
 def parse_monster_details(html_soup): 
 	final_monster_details = {}
 	monster_data = html_soup.find_all("div", {"class": "col-xs-12 col-md-6"})
-	print(len(monster_data))
+	final_monster_details["size"] = monster_data[0]
 	return final_monster_details
+
+def view_monster_details(html_soup): 
+	monster_data = html_soup.find_all("div", {"class": "col-xs-12 col-md-6"})
+	print type(monster_data)
+	for i in range(0, len(monster_data[0].find_all("em"))):
+		print monster_data[0].find_all("em")[i]
 
 
 if __name__ == "__main__":
