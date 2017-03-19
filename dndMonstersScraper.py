@@ -39,7 +39,11 @@ def get_all_monster_details(monsters):
 def parse_monster_details(html_soup): 
 	final_monster_details = {}
 	monster_data = html_soup.find_all("div", {"class": "col-xs-12 col-md-6"})
-	final_monster_details["size"] = monster_data[0]
+	final_monster_details["size"] = re.sub('<[^>]+>', '', str(monster_data[0].find_all("em")[0]))
+	final_monster_details["type"] = re.sub('<[^>]+>', '', str(monster_data[0].find_all("em")[1]))
+	final_monster_details["alignment"] = re.sub('<[^>]+>', '', str(monster_data[0].find_all("em")[3]))
+
+	
 	return final_monster_details
 
 def view_monster_details(html_soup): 
