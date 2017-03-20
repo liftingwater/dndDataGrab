@@ -39,18 +39,37 @@ def get_all_monster_details(monsters):
 def parse_monster_details(html_soup): 
 	final_monster_details = {}
 	monster_data = html_soup.find_all("div", {"class": "col-xs-12 col-md-6"})
-	final_monster_details["size"] = re.sub('<[^>]+>', '', str(monster_data[0].find_all("em")[0]))
-	final_monster_details["type"] = re.sub('<[^>]+>', '', str(monster_data[0].find_all("em")[1]))
-	final_monster_details["alignment"] = re.sub('<[^>]+>', '', str(monster_data[0].find_all("em")[3]))
+	data_keys = ["size", "type", "alignment", "armor class", "hit points", "speed", "proficiency bonus", "saving throws", "skills", "senses", "language", "challenge"]
 
-	
+	saved_monster_data = []
+
+	for i in [0, 1, 3]: 
+		saved_monster_data.append(re.sub('<[^>]+>', '', str(monster_data[0].find_all("em")[i])))
+
+	monster_stats = monster_data[0].find_all("div", {"class": "char-details-field"})
+
+	#monster_stats_list = []
+	for i in monster_stats: 
+		saved_monster_data.append(re.sub('<[^>]+>', '', str(i.find_all("span")[0])))
+
+	for i in range(len(data_keys)):
+		final_monster_details[data_keys[i]] = saved_monster_data[i]
+
+	#print(monster_stats_list)
+
 	return final_monster_details
 
 def view_monster_details(html_soup): 
 	monster_data = html_soup.find_all("div", {"class": "col-xs-12 col-md-6"})
-	print type(monster_data)
-	for i in range(0, len(monster_data[0].find_all("em"))):
-		print monster_data[0].find_all("em")[i]
+	print(monster_data)
+
+	print("\n +++++++++++++++++++++++++++++++++++++++++++++ \n")
+
+	monster_stats = monster_data[0].find_all("div", {"class": "char-details-field"})
+	for i in monster_stats: 
+		print "\n ++++++++++++++ \n"
+		print(i)
+	return None
 
 
 if __name__ == "__main__":
