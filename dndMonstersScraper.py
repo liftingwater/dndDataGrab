@@ -30,11 +30,11 @@ def make_monsters_dataFrame(monsters):
 
 def get_all_monster_details(monsters): 
 	for monster in monsters: 
-		html = urllib.urlopen("http://www.orcpub.com/dungeons-and-dragons/5th-edition/monsters/" + monster.lower())
+		html = urllib.urlopen("http://www.orcpub.com/dungeons-and-dragons/5th-edition/monsters/" + re.sub(' ', '-', monster.lower()))
 		monster_details_on_page = view_monster_details(bs4.BeautifulSoup(html, 'html.parser'))
 		#monster_details_on_page = parse_monster_details(bs4.BeautifulSoup(html, 'html.parser'))
 		monster_details_on_page["name"] = monster
-		return monster_details_on_page
+	return monster_details_on_page
 
 def parse_monster_details(html_soup): 
 	final_monster_details = {}
@@ -69,27 +69,31 @@ def parse_monster_details(html_soup):
 		detail_name = re.sub('<[^>]+>', '', str(i.find_all("strong")))
 		detail_text = re.sub('<[^>]+>', '', str(i.find_all("span")))
 		final_monster_details["details"][detail_name] = [detail_text]
+	monster_actions = {}
 
 	return final_monster_details
 
 def view_monster_details(html_soup): 
 	monster_data_html = html_soup.find_all("div", {"class": "col-xs-12 col-md-6"})
 	monster_data = list(monster_data_html)
-	#for i in monster_data[0]:
-	#	print("\n New item: \n")
-	#	print(i)
+			
+	if len(monster_data_html[2].find_all("h4")) == 1: 
+		print monster_data_html[2].find_all("div")[1]
+	else: 
+		print "Legendary Creature"
+		print(monster_data_html[2].find_all("div")[1])
+		print monster_data_html[2].find_all("div")[2]
+		print '\n'
 
-	print(list(monster_data[0])[4].find_all("p")[1].find_all("strong"))
+	#print(list(monster_data[0])[4].find_all("p")[1].find_all("strong"))
 	return {}
-
 
 if __name__ == "__main__":
 	html = urllib.urlopen("http://www.orcpub.com/dungeons-and-dragons/5th-edition/monsters")
 	monster_manual = get_monster_list(bs4.BeautifulSoup(html, 'html.parser'))
-	monster_manual = parse_monster_data(monster_manual[0:1])
+	monster_manual = parse_monster_data(monster_manual[4:5])
 	monster_directory = make_monsters_dataFrame(monster_manual)
 	
 	#print(monster_directory)
 	all_monster_details = get_all_monster_details(monster_directory["name"])
-	print(all_monster_details)
-
+	#print(all_monster_details)
