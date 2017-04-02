@@ -76,17 +76,24 @@ def parse_monster_details(html_soup):
 def view_monster_details(html_soup): 
 	monster_data_html = html_soup.find_all("div", {"class": "col-xs-12 col-md-6"})
 	monster_data = list(monster_data_html)
-			
+	monster_actions = {}
 	if len(monster_data_html[2].find_all("h4")) == 1: 
-		print monster_data_html[2].find_all("div")[1]
+		data = monster_data_html[2].find_all("div")
+		for i in data[1].find_all("p"): 
+			monster_actions[re.sub('<[^>]+>', '', str(i.find_all("strong")))] = re.sub('<[^>]+>', '', str(i.find_all("span")))
+			print(re.sub('<[^>]+>', '', str(i.find_all("strong"))) + ": " + re.sub('<[^>]+>', '', str(i.find_all("span"))))
 	else: 
 		print "Legendary Creature"
-		print(monster_data_html[2].find_all("div")[1])
-		print monster_data_html[2].find_all("div")[2]
+		data = monster_data_html[2].find_all("div")
+		for i in data[1].find_all("p"): 
+			#monster_actions[i.find_all("strong")] = i.find_all("span")
+			print type(i)
+		for i in data[2].find_all("p"): 
+			#monster_actions[i.find_all("strong")] = i.find_all("span")
+			print type(i)
 		print '\n'
 
-	#print(list(monster_data[0])[4].find_all("p")[1].find_all("strong"))
-	return {}
+	return monster_actions
 
 if __name__ == "__main__":
 	html = urllib.urlopen("http://www.orcpub.com/dungeons-and-dragons/5th-edition/monsters")
