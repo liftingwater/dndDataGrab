@@ -31,8 +31,8 @@ def make_monsters_dataFrame(monsters):
 def get_all_monster_details(monsters): 
 	for monster in monsters: 
 		html = urllib.urlopen("http://www.orcpub.com/dungeons-and-dragons/5th-edition/monsters/" + re.sub(' ', '-', monster.lower()))
-		monster_details_on_page = view_monster_details(bs4.BeautifulSoup(html, 'html.parser'))
-		#monster_details_on_page = parse_monster_details(bs4.BeautifulSoup(html, 'html.parser'))
+		#monster_details_on_page = view_monster_details(bs4.BeautifulSoup(html, 'html.parser'))
+		monster_details_on_page = parse_monster_details(bs4.BeautifulSoup(html, 'html.parser'))
 		monster_details_on_page["name"] = monster
 	return monster_details_on_page
 
@@ -69,7 +69,28 @@ def parse_monster_details(html_soup):
 		detail_name = re.sub('<[^>]+>', '', str(i.find_all("strong")))
 		detail_text = re.sub('<[^>]+>', '', str(i.find_all("span")))
 		final_monster_details["details"][detail_name] = [detail_text]
+	
 	monster_actions = {}
+	monster_lgnd_act = {}
+
+	if len(monster_data_html[2].find_all("h4")) == 1: 
+		data = monster_data_html[2].find_all("div")
+		for i in data[1].find_all("p"): 
+			monster_actions[re.sub('<[^>]+>', '', str(i.find_all("strong")))] = re.sub('<[^>]+>', '', str(i.find_all("span")))
+			#print(re.sub('<[^>]+>', '', str(i.find_all("strong"))) + ": " + re.sub('<[^>]+>', '', str(i.find_all("span"))))
+	else: 
+		print "Legendary Creature"
+		data = monster_data_html[2].find_all("div")
+		for i in data[1].find_all("p"): 
+			monster_actions[re.sub('<[^>]+>', '', str(i.find_all("strong")))] = re.sub('<[^>]+>', '', str(i.find_all("span")))
+			#print(re.sub('<[^>]+>', '', str(i.find_all("strong"))) + ": " + re.sub('<[^>]+>', '', str(i.find_all("span"))))
+		for i in data[2].find_all("p"): 
+			monster_lgnd_act[re.sub('<[^>]+>', '', str(i.find_all("strong")))] = re.sub('<[^>]+>', '', str(i.find_all("span")))
+			#print(re.sub('<[^>]+>', '', str(i.find_all("strong"))) + ": " + re.sub('<[^>]+>', '', str(i.find_all("span"))))
+		print '\n'
+
+	final_monster_details["actions"] = monster_actions
+	final_monster_details["lgnd_actions"] = monster_lgnd_act
 
 	return final_monster_details
 
@@ -81,16 +102,13 @@ def view_monster_details(html_soup):
 		data = monster_data_html[2].find_all("div")
 		for i in data[1].find_all("p"): 
 			monster_actions[re.sub('<[^>]+>', '', str(i.find_all("strong")))] = re.sub('<[^>]+>', '', str(i.find_all("span")))
-			print(re.sub('<[^>]+>', '', str(i.find_all("strong"))) + ": " + re.sub('<[^>]+>', '', str(i.find_all("span"))))
 	else: 
 		print "Legendary Creature"
 		data = monster_data_html[2].find_all("div")
 		for i in data[1].find_all("p"): 
-			#monster_actions[i.find_all("strong")] = i.find_all("span")
-			print type(i)
+			monster_actions[re.sub('<[^>]+>', '', str(i.find_all("strong")))] = re.sub('<[^>]+>', '', str(i.find_all("span")))
 		for i in data[2].find_all("p"): 
-			#monster_actions[i.find_all("strong")] = i.find_all("span")
-			print type(i)
+			monster_actions[re.sub('<[^>]+>', '', str(i.find_all("strong")))] = re.sub('<[^>]+>', '', str(i.find_all("span")))
 		print '\n'
 
 	return monster_actions
@@ -98,9 +116,11 @@ def view_monster_details(html_soup):
 if __name__ == "__main__":
 	html = urllib.urlopen("http://www.orcpub.com/dungeons-and-dragons/5th-edition/monsters")
 	monster_manual = get_monster_list(bs4.BeautifulSoup(html, 'html.parser'))
-	monster_manual = parse_monster_data(monster_manual[4:5])
+	monster_manual = parse_monster_data(monster_manual[0:1])
 	monster_directory = make_monsters_dataFrame(monster_manual)
 	
 	#print(monster_directory)
 	all_monster_details = get_all_monster_details(monster_directory["name"])
-	#print(all_monster_details)
+	print(all_monster_details)
+
+
