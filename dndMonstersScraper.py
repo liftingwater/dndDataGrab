@@ -75,18 +75,14 @@ def parse_monster_details(html_soup):
 
 	if len(monster_data_html[2].find_all("h4")) == 1: 
 		data = monster_data_html[2].find_all("div")
-		for i in data[1].find_all("p"): 
+		for i in data[0].find_all("p"): 
 			monster_actions[re.sub('<[^>]+>', '', str(i.find_all("strong")))] = re.sub('<[^>]+>', '', str(i.find_all("span")))
-			#print(re.sub('<[^>]+>', '', str(i.find_all("strong"))) + ": " + re.sub('<[^>]+>', '', str(i.find_all("span"))))
 	else: 
-		print "Legendary Creature"
 		data = monster_data_html[2].find_all("div")
-		for i in data[1].find_all("p"): 
+		for i in data[0].find_all("p"): 
 			monster_actions[re.sub('<[^>]+>', '', str(i.find_all("strong")))] = re.sub('<[^>]+>', '', str(i.find_all("span")))
-			#print(re.sub('<[^>]+>', '', str(i.find_all("strong"))) + ": " + re.sub('<[^>]+>', '', str(i.find_all("span"))))
 		for i in data[2].find_all("p"): 
 			monster_lgnd_act[re.sub('<[^>]+>', '', str(i.find_all("strong")))] = re.sub('<[^>]+>', '', str(i.find_all("span")))
-			#print(re.sub('<[^>]+>', '', str(i.find_all("strong"))) + ": " + re.sub('<[^>]+>', '', str(i.find_all("span"))))
 		print '\n'
 
 	final_monster_details["actions"] = monster_actions
@@ -98,18 +94,28 @@ def view_monster_details(html_soup):
 	monster_data_html = html_soup.find_all("div", {"class": "col-xs-12 col-md-6"})
 	monster_data = list(monster_data_html)
 	monster_actions = {}
+	monster_lgnd_act = {}
+
 	if len(monster_data_html[2].find_all("h4")) == 1: 
 		data = monster_data_html[2].find_all("div")
-		for i in data[1].find_all("p"): 
+		for i in data[0].find_all("p"): 
 			monster_actions[re.sub('<[^>]+>', '', str(i.find_all("strong")))] = re.sub('<[^>]+>', '', str(i.find_all("span")))
+
 	else: 
 		print "Legendary Creature"
 		data = monster_data_html[2].find_all("div")
-		for i in data[1].find_all("p"): 
+		for i in data[0].find_all("p"): 
 			monster_actions[re.sub('<[^>]+>', '', str(i.find_all("strong")))] = re.sub('<[^>]+>', '', str(i.find_all("span")))
+		print monster_actions
 		for i in data[2].find_all("p"): 
-			monster_actions[re.sub('<[^>]+>', '', str(i.find_all("strong")))] = re.sub('<[^>]+>', '', str(i.find_all("span")))
-		print '\n'
+			monster_lgnd_act[re.sub('<[^>]+>', '', str(i.find_all("strong"))) + '*'] = re.sub('<[^>]+>', '', str(i.find_all("span")))
+		print monster_lgnd_act
+
+	print ''
+
+	print monster_actions
+	print ''
+	print monster_lgnd_act
 
 	return monster_actions
 
