@@ -47,9 +47,10 @@ def get_all_monster_details(monsters):
 		print(re.sub(' ', '-', monster.lower()))
 		#retreive data from monster page
 		html = urllib.urlopen("http://www.orcpub.com/dungeons-and-dragons/5th-edition/monsters/" + re.sub(' ', '-', monster.lower()))
-		#monster_details_on_page = view_monster_details(bs4.BeautifulSoup(html, 'html.parser'))
+		view_monster_details(bs4.BeautifulSoup(html, 'html.parser'))
+		break
 		#This line of code calls the function to get the monster details for that specific monster
-		monster_details_on_page = parse_monster_details(bs4.BeautifulSoup(html, 'html.parser'))
+		#monster_details_on_page = parse_monster_details(bs4.BeautifulSoup(html, 'html.parser'))
 		monster_details_on_page["name"] = monster
 		#Append data to the master dictionary
 		total_monster_details_list.append(monster_details_on_page)
@@ -88,35 +89,41 @@ def view_monster_details(html_soup):
 	monster_actions = {}
 	monster_lgnd_act = {}
 
-	if len(monster_data_html[2].find_all("h4")) == 1: 
-		data = monster_data_html[2].find_all("div")
-		for i in data[0].find_all("p"): 
-			monster_actions[re.sub('<[^>]+>', '', str(i.find_all("strong")))] = re.sub('<[^>]+>', '', str(i.find_all("span")))
+	print(monster_data_html[2].find_all("div")[2].find_all('strong'))
+	actions = monster_data_html[2].find_all("div")[2].find_all('strong')
+	print(monster_data_html[2].find_all("div")[2].find_all('span'))
+	action_details = monster_data_html[2].find_all("div")[2].find_all('span')
+	for i in range(len(actions)): 
+		monster_actions[re.sub('<[^>]+>', '', str(actions[i]))] = re.sub('<[^>]+>', '', str(action_details[i]))
 
-	else: 
-		print "Legendary Creature"
-		data = monster_data_html[2].find_all("div")
-		for i in data[0].find_all("p"): 
-			monster_actions[re.sub('<[^>]+>', '', str(i.find_all("strong")))] = re.sub('<[^>]+>', '', str(i.find_all("span")))
-		print monster_actions
-		for i in data[2].find_all("p"): 
-			monster_lgnd_act[re.sub('<[^>]+>', '', str(i.find_all("strong"))) + '*'] = re.sub('<[^>]+>', '', str(i.find_all("span")))
-		print monster_lgnd_act
+	for i in monster_actions: 
+		print i, ': ', monster_actions[i]
+		print '\n'
 
-	print monster_actions
-	print monster_lgnd_act
-
-	return monster_actions
+	try: 
+		print(monster_data_html[2].find_all("div")[3].find_all('strong'))
+		lgnd_actions = monster_data_html[2].find_all("div")[3].find_all('strong')
+		print(monster_data_html[2].find_all("div")[3].find_all('span'))
+		lgnd_action_details = monster_data_html[2].find_all("div")[3].find_all('span')
+		for i in range(len(lgnd_actions)): 
+			monster_lgnd_act[re.sub('<[^>]+>', '', str(lgnd_actions[i]))] = re.sub('<[^>]+>', '', str(lgnd_action_details[i]))
+		for i in monster_lgnd_act: 
+			print i, ': ', monster_lgnd_act[i]
+			print '\n'
+	except: 
+		pass
+	
+	return monster_actions, monster_lgnd_act
 
 if __name__ == "__main__":
 	html = urllib.urlopen("http://www.orcpub.com/dungeons-and-dragons/5th-edition/monsters")
 	monster_manual = get_monster_list(bs4.BeautifulSoup(html, 'html.parser'))
 	#Get a list of monsters on the main page: http://www.orcpub.com/dungeons-and-dragons/5th-edition/monsters
 	#monster manual is a list of html code taken from the main page of the website
-	monster_manual = parse_monster_data(monster_manual)
+	monster_manual = parse_monster_data(monster_manual[0:5])
 	#parse the html code for the list of attributes. Monster manual becomes a dictionary of monster names, sizes, etc.
 	monster_directory = make_monsters_dataFrame(monster_manual)
 	#monster_directory is a data frame
 	all_monster_details = get_all_monster_details(monster_directory["name"])
 	all_monster_details = make_monster_details_dataFrame(all_monster_details)
-	print all_monster_details
+	#print all_monster_details
