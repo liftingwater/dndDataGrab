@@ -86,7 +86,7 @@ if __name__ == "__main__":
 	spell_details_df = pd.DataFrame(all_spell_details)
 
 	spells_df.to_csv('spells.csv', encoding='utf-8')
-	spell_details_df.to_csv('spellDetails.csv', encoding='utf-8')
+	spell_details_df.to_csv('spellDetails.csv', columns= ["name", "level", "casting", "range", "componants", "duration", "description", "source"], encoding='utf-8')
 
 
 	
