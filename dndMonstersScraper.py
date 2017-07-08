@@ -83,33 +83,32 @@ def parse_monster_details(html_soup):
 	#Code to get monster facets
 	monster_facets = {}
 	for i in monster_data_html[0].find_all('div')[-1]: 
-		#print str(i.find_all('strong'))[1:-1]
-		#print str(i.find_all('span'))[1:-1]
 		if str(i.find_all('strong')) != '[]': 
 			monster_facets[re.sub('<[^>]+>', '', str(i.find_all('strong'))[1:-1])] = re.sub('<[^>]+>', '', str(i.find_all('span'))[1:-1])
-	#print(monster_facets)
 	final_monster_details['facets'] = monster_facets
 
 	#Get monster actions and legendary actions
 	monster_actions = {}
 	monster_lgnd_act = {}
 
-	actions = monster_data_html[2].find_all("div")[2].find_all('strong')
-	action_details = monster_data_html[2].find_all("div")[2].find_all('span')
-	for i in range(len(actions)): 
-		monster_actions[re.sub('<[^>]+>', '', str(actions[i]))] = re.sub('<[^>]+>', '', str(action_details[i]))
-	final_monster_details['actions'] = monster_actions
-
 	try: 
-		lgnd_actions = monster_data_html[2].find_all("div")[3].find_all('strong')
-		lgnd_action_details = monster_data_html[2].find_all("div")[3].find_all('span')
-		for i in range(len(lgnd_actions)): 
-			monster_lgnd_act[re.sub('<[^>]+>', '', str(lgnd_actions[i]))] = re.sub('<[^>]+>', '', str(lgnd_action_details[i]))
-		final_monster_details['legendary_actions'] = monster_lgnd_act
+		actions = monster_data_html[2].find_all("div")[2].find_all('strong')
+		action_details = monster_data_html[2].find_all("div")[2].find_all('span')
+		for i in range(len(actions)): 
+			monster_actions[re.sub('<[^>]+>', '', str(actions[i]))] = re.sub('<[^>]+>', '', str(action_details[i]))
+		final_monster_details['actions'] = monster_actions
+
+		try: 
+			lgnd_actions = monster_data_html[2].find_all("div")[3].find_all('strong')
+			lgnd_action_details = monster_data_html[2].find_all("div")[3].find_all('span')
+			for i in range(len(lgnd_actions)): 
+				monster_lgnd_act[re.sub('<[^>]+>', '', str(lgnd_actions[i]))] = re.sub('<[^>]+>', '', str(lgnd_action_details[i]))
+			final_monster_details['legendary_actions'] = monster_lgnd_act
+		except: 
+			pass
 	except: 
 		pass
 
-	print final_monster_details
 	return final_monster_details
 
 
@@ -154,9 +153,9 @@ if __name__ == "__main__":
 	#monster manual is a list of html code taken from the main page of the website
 	monster_manual = parse_monster_data(monster_manual)
 	#parse the html code for the list of attributes. Monster manual becomes a dictionary of monster names, sizes, etc.
-	monster_directory = make_monsters_dataFrame(monster_manual[0:1])
+	monster_directory = make_monsters_dataFrame(monster_manual)
 	#monster_directory is a data frame
 	all_monster_details = get_all_monster_details(monster_directory["name"])
 	all_monster_details = make_monster_details_dataFrame(all_monster_details)
-	all_monster_details.to_csv('monsterManual5e.csv', columns= ["name", "size", "type", "alignment", "armor class", "hit points", "speed", "str", "dex", "con", "int", "wis", "cha", "proficiency bonus", "saving throws", "skills", "damage vulnerabilities", "damage resistances", "damage immunities", "condition immunities", "senses", "languages", "challenge", "facets", "actions", "legendary_actions"], encoding='utf-8')
+	all_monster_details.to_csv('../monsterManual5e.csv', columns= ["name", "size", "type", "alignment", "armor class", "hit points", "speed", "str", "dex", "con", "int", "wis", "cha", "proficiency bonus", "saving throws", "skills", "damage vulnerabilities", "damage resistances", "damage immunities", "condition immunities", "senses", "languages", "challenge", "facets", "actions", "legendary_actions"], encoding='utf-8')
 
